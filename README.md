@@ -147,7 +147,7 @@ curl http://localhost:3000/api/health
 如果你用 Codex、OpenCode、Cursor、Cline、Warp 等支持 Agent Skills 的工具，可以安装配套 skill：
 
 ```bash
-npx skills add joeseesun/qiaomu-app-review
+npx skills add joeseesun/qiaomu-app-review-skill
 ```
 
 安装后可以这样说：
@@ -199,4 +199,3 @@ Skill 会引导 Agent 使用本项目的公开站点、API、缓存和 DeepSeek 
 ## License
 
 MIT
-
