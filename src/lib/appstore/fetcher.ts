@@ -333,6 +333,8 @@ export class AppStoreFetcher {
       contentTypeLabel: 'Review',
       appId,
       country,
+      source: 'app-store-html',
+      sourceCountry: country,
     };
   }
 
@@ -490,6 +492,8 @@ export class AppStoreFetcher {
         contentTypeLabel: entry['im:contentType']?.attributes?.label || '',
         appId,
         country,
+        source: 'apple-rss',
+        sourceCountry: country,
       };
     } catch (error) {
       console.warn('Failed to parse review entry:', error);
