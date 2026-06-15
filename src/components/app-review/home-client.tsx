@@ -22,6 +22,7 @@ import {
   ReviewSourceBreakdownPanel,
   reviewSourceLabel,
 } from '@/components/app-review/source-breakdown';
+import { TopChartsSection } from '@/components/app-review/top-charts-section';
 import { AppStoreReview } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -104,6 +105,38 @@ interface FeaturedAppSummary {
   negativeShare: number;
   positiveShare: number;
   primaryGenreName?: string;
+}
+
+interface TopChartCountry {
+  value: string;
+  label: string;
+}
+
+interface TopChartCategory {
+  value: string;
+  label: string;
+  genre?: string;
+}
+
+interface TopChartApp {
+  rank: number;
+  id: string;
+  name: string;
+  artistName: string;
+  artworkUrl: string;
+  categoryName?: string;
+  appStoreUrl?: string;
+  country: string;
+  chart: 'free' | 'paid';
+  category: string;
+  cached?: {
+    pagePath: string;
+    updatedAt: string;
+    totalReviews: number;
+    averageRating: number;
+    negativeShare: number;
+    hasInsights: boolean;
+  };
 }
 
 interface ApiResponse<T> {
@@ -312,9 +345,15 @@ function FeaturedApps({ apps, currentPage }: { apps: FeaturedAppSummary[]; curre
 export default function Home({
   featuredApps = [],
   initialCachePage = 1,
+  topChartCountries = [],
+  topChartCategories = [],
+  initialTopChartApps = [],
 }: {
   featuredApps?: FeaturedAppSummary[];
   initialCachePage?: number;
+  topChartCountries?: TopChartCountry[];
+  topChartCategories?: TopChartCategory[];
+  initialTopChartApps?: TopChartApp[];
 }) {
   const [query, setQuery] = useState('ChatGPT');
   const [country, setCountry] = useState('cn');
@@ -670,6 +709,11 @@ export default function Home({
         </section>
       ) : (
         <>
+          <TopChartsSection
+            countries={topChartCountries}
+            categories={topChartCategories}
+            initialApps={initialTopChartApps}
+          />
           <FeaturedApps apps={featuredApps} currentPage={initialCachePage} />
           <section className="mx-auto grid max-w-7xl gap-4 px-4 py-6 sm:px-6 lg:grid-cols-3 lg:px-8">
             <div className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">

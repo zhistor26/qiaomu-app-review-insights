@@ -328,6 +328,23 @@ function getReviewCorpus(page: CachedAppReviewPage) {
   return page.allReviews?.length ? page.allReviews : page.reviews;
 }
 
+function cacheIdentity(page: CachedAppReviewPage) {
+  return `${normalizeCountry(page.app?.country || 'us')}-${page.app?.id || page.cacheKey}`;
+}
+
+function pickBetterCachedPage(current: CachedAppReviewPage, candidate: CachedAppReviewPage) {
+  const currentReviews = current.stats?.totalReviews || 0;
+  const candidateReviews = candidate.stats?.totalReviews || 0;
+
+  if (candidateReviews !== currentReviews) {
+    return candidateReviews > currentReviews ? candidate : current;
+  }
+
+  return new Date(candidate.updatedAt).getTime() > new Date(current.updatedAt).getTime()
+    ? candidate
+    : current;
+}
+
 function safeErrorMessage(error: unknown) {
   if (!(error instanceof Error)) return '未知错误';
   if (/api[_-]?key|authorization|secret|token/i.test(error.message)) {
@@ -401,7 +418,16 @@ export async function getFeaturedCachedApps(limit = 18): Promise<FeaturedAppSumm
 
 export async function getCachedAppSummaries(): Promise<FeaturedAppSummary[]> {
   const pages = await listCachedReviewPages();
-  return pages
+  const dedupedPages = Array.from(
+    pages.reduce((map, page) => {
+      const key = cacheIdentity(page);
+      const current = map.get(key);
+      map.set(key, current ? pickBetterCachedPage(current, page) : page);
+      return map;
+    }, new Map<string, CachedAppReviewPage>()).values()
+  );
+
+  return dedupedPages
     .sort((a, b) => {
       const updatedDelta = new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
       if (updatedDelta !== 0) return updatedDelta;
