@@ -22,10 +22,11 @@ const profileLinks = [
 function BrandName({ className = 'text-lg' }: { className?: string }) {
   return (
     <p
-      className={`${className} font-semibold leading-none text-zinc-950`}
-      style={{ fontFamily: '"Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", SimSun, serif' }}
+      className={`${className} inline-flex items-baseline gap-1.5 whitespace-nowrap leading-none`}
+      style={{ fontFamily: '"PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", system-ui, sans-serif' }}
     >
-      乔木App洞察
+      <span className="text-zinc-950" style={{ fontWeight: 760 }}>乔木</span>
+      <span className="text-zinc-800" style={{ fontWeight: 620 }}>App洞察</span>
     </p>
   );
 }
@@ -33,8 +34,12 @@ function BrandName({ className = 'text-lg' }: { className?: string }) {
 export function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
     <div className="flex items-center gap-3">
-      <img src="/logo.svg" alt="乔木App洞察 Logo" className={`${compact ? 'h-9 w-9' : 'h-10 w-10'} rounded-lg shadow-sm`} />
-      <BrandName className={compact ? 'text-lg' : 'text-xl'} />
+      <img
+        src="/logo.svg"
+        alt="乔木App洞察 Logo"
+        className={`${compact ? 'h-9 w-9 rounded-[10px]' : 'h-10 w-10 rounded-xl'} shrink-0 ring-1 ring-zinc-950/10`}
+      />
+      <BrandName className={compact ? 'text-[18px]' : 'text-[20px]'} />
     </div>
   );
 }
