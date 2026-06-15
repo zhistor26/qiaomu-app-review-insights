@@ -10,14 +10,15 @@ import {
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '乔木App评价洞察 - App Store用户评价分析与DeepSeek信息挖掘',
-  description: '搜索任意 iOS App，生成用户评价洞察页面，用 DeepSeek flash 从 App Store 评论中提炼痛点、机会、版本风险和用户需求。',
+  title: '乔木App评价洞察 - App Store用户评价分析与产品机会挖掘',
+  description: '搜索任意 iOS App，生成用户评价洞察页面，从 App Store 评论中提炼痛点、机会、版本风险和用户需求。',
   keywords: [
     '乔木App评价洞察',
     'App评价分析',
     'App Store评论分析',
     '用户反馈挖掘',
-    'DeepSeek flash',
+    '产品机会挖掘',
+    '竞品评价分析',
     '产品需求分析',
   ],
   alternates: {

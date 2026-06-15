@@ -591,7 +591,7 @@ export default function Home({
           <section className="mt-4 rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg font-semibold text-zinc-950">DeepSeek 信息挖掘</h2>
+                <h2 className="text-lg font-semibold text-zinc-950">用户评价洞察</h2>
                 <p className="mt-1 text-sm text-zinc-500">
                   {result.model ? `${result.model.provider} · ${result.model.model}` : '评论证据优先'}
                 </p>

@@ -98,7 +98,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       `${cached.app.name}评论`,
       'App Store评论分析',
       '用户反馈挖掘',
-      'DeepSeek flash',
+      '产品机会挖掘',
+      '竞品评价分析',
       '产品需求分析',
     ],
     alternates: {
@@ -204,7 +205,7 @@ export default async function AppInsightPage({ params }: PageProps) {
                 </h1>
                 <p className="mt-2 text-sm text-zinc-500">{page.app.artistName || 'App Store'} · 更新于 {formatDate(page.updatedAt)}</p>
                 <p className="mt-4 max-w-3xl text-base leading-7 text-zinc-700">
-                  本页基于 App Store 用户评价生成，面向产品分析和竞品研究，保留评论证据、来源构成和样本边界，并用 DeepSeek flash 提炼可行动信号。
+                  本页基于 App Store 用户评价生成，面向产品分析和竞品研究，保留评论证据、来源构成和样本边界，并提炼可行动信号。
                 </p>
               </div>
             </div>
