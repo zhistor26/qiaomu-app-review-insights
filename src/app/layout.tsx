@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     default: "乔木App评价洞察",
     template: "%s | 乔木App评价洞察",
   },
-  description: "搜索任意 iOS App，生成 App Store 用户评价洞察页，用 DeepSeek flash 挖掘痛点、机会和版本风险。",
+  description: "搜索任意 iOS App，生成 App Store 用户评价洞察页，提炼痛点、机会和版本风险。",
   applicationName: "乔木App评价洞察",
   icons: {
     icon: "/logo.svg",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "乔木App评价洞察",
-    description: "用 DeepSeek flash 挖掘 App Store 用户评价里的产品信号。",
+    description: "挖掘 App Store 用户评价里的痛点、机会和版本风险。",
   },
 };
 
