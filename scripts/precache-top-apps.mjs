@@ -5,11 +5,38 @@ const chartMap = {
   paid: 'toppaidapplications',
 };
 
+const categoryMap = {
+  all: '',
+  games: '6014',
+  productivity: '6007',
+  social: '6005',
+  entertainment: '6016',
+  shopping: '6024',
+  photo: '6008',
+  finance: '6015',
+  lifestyle: '6012',
+  education: '6017',
+  utilities: '6002',
+  music: '6011',
+  food: '6023',
+  health: '6013',
+  travel: '6003',
+  news: '6009',
+  sports: '6004',
+  business: '6000',
+  weather: '6001',
+  navigation: '6010',
+  reference: '6006',
+  medical: '6020',
+  books: '6018',
+};
+
 function parseArgs(argv) {
   const options = {
     baseUrl: process.env.APP_REVIEW_BASE_URL || 'http://localhost:3000',
     countries: ['cn', 'us'],
     charts: ['free', 'paid'],
+    categories: ['all'],
     limit: 5,
     maxReviews: 160,
     analyze: true,
@@ -28,6 +55,9 @@ function parseArgs(argv) {
       index += 1;
     } else if (arg === '--charts' && next) {
       options.charts = next.split(',').map((item) => item.trim().toLowerCase()).filter((item) => chartMap[item]);
+      index += 1;
+    } else if (arg === '--categories' && next) {
+      options.categories = next.split(',').map((item) => item.trim().toLowerCase()).filter((item) => Object.prototype.hasOwnProperty.call(categoryMap, item));
       index += 1;
     } else if (arg === '--limit' && next) {
       options.limit = Math.min(Math.max(Number.parseInt(next, 10) || options.limit, 1), 25);
@@ -48,7 +78,7 @@ function parseArgs(argv) {
   };
 }
 
-function normalizeTopEntry(entry, country, chart) {
+function normalizeTopEntry(entry, country, chart, category) {
   const id = entry?.id?.attributes?.['im:id'];
   const name = entry?.['im:name']?.label;
   if (!id || !name) return null;
@@ -58,12 +88,15 @@ function normalizeTopEntry(entry, country, chart) {
     name,
     country,
     chart,
+    category,
   };
 }
 
-async function fetchTopApps(country, chart, limit) {
+async function fetchTopApps(country, chart, category, limit) {
   const rssName = chartMap[chart];
-  const url = `https://itunes.apple.com/${country}/rss/${rssName}/limit=${limit}/json`;
+  const genre = categoryMap[category];
+  const genrePart = genre ? `/genre=${genre}` : '';
+  const url = `https://itunes.apple.com/${country}/rss/${rssName}/limit=${limit}${genrePart}/json`;
   const response = await fetch(url, {
     headers: {
       Accept: 'application/json',
@@ -79,7 +112,7 @@ async function fetchTopApps(country, chart, limit) {
   const rawEntries = data?.feed?.entry;
   const entries = Array.isArray(rawEntries) ? rawEntries : rawEntries ? [rawEntries] : [];
   return entries
-    .map((entry) => normalizeTopEntry(entry, country, chart))
+    .map((entry) => normalizeTopEntry(entry, country, chart, category))
     .filter(Boolean);
 }
 
@@ -111,12 +144,14 @@ async function main() {
 
   for (const country of options.countries) {
     for (const chart of options.charts) {
-      const apps = await fetchTopApps(country, chart, options.limit);
-      for (const app of apps) {
-        const key = `${app.country}-${app.id}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
-        targets.push(app);
+      for (const category of options.categories) {
+        const apps = await fetchTopApps(country, chart, category, options.limit);
+        for (const app of apps) {
+          const key = `${app.country}-${app.id}`;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          targets.push(app);
+        }
       }
     }
   }
@@ -125,7 +160,7 @@ async function main() {
 
   const results = [];
   for (const [index, app] of targets.entries()) {
-    const prefix = `[${index + 1}/${targets.length}] ${app.country.toUpperCase()} ${app.chart} ${app.name}`;
+    const prefix = `[${index + 1}/${targets.length}] ${app.country.toUpperCase()} ${app.chart}/${app.category} ${app.name}`;
     try {
       const data = await generateApp(options.baseUrl, app, options);
       console.log(`${prefix} -> ${data.pageUrl} ${data.cached ? '(cached)' : '(generated)'}`);
