@@ -133,35 +133,50 @@ export class AppStoreFetcher {
    * 抓取指定页面的评论
    */
   private static async fetchPageReviews(appId: string, country: string, page: number): Promise<AppStoreReview[]> {
-    const url = `${this.BASE_URL}/${country}/rss/customerreviews/id=${appId}/page=${page}/json`;
+    const urls = this.buildReviewUrls(appId, country, page);
 
     try {
-      console.log(`Making request to: ${url}`);
-      const response = await this.fetchWithRetry(url);
-      console.log(`Response received, status: ${response.status}`);
+      for (const url of urls) {
+        console.log(`Making request to: ${url}`);
+        const response = await this.fetchWithRetry(url);
+        console.log(`Response received, status: ${response.status}`);
 
-      const data: AppStoreResponse = await response.json();
-      console.log(`JSON parsed successfully`);
+        const data: AppStoreResponse = await response.json();
+        console.log(`JSON parsed successfully`);
 
-      if (!data.feed) {
-        console.warn(`No feed found in response for app ${appId} page ${page}`);
-        return [];
+        if (!data.feed) {
+          console.warn(`No feed found in response for app ${appId} page ${page}`);
+          continue;
+        }
+
+        if (!data.feed.entry) {
+          console.warn(`No entries found in feed for app ${appId} page ${page}`);
+          continue;
+        }
+
+        console.log(`Found ${data.feed.entry.length} entries on page ${page}`);
+        const reviews = this.parseReviews(data.feed.entry, appId, country);
+        console.log(`Parsed ${reviews.length} reviews from page ${page}`);
+
+        if (reviews.length > 0) {
+          return reviews;
+        }
       }
 
-      if (!data.feed.entry) {
-        console.warn(`No entries found in feed for app ${appId} page ${page}`);
-        return [];
-      }
-
-      console.log(`Found ${data.feed.entry.length} entries on page ${page}`);
-      const reviews = this.parseReviews(data.feed.entry, appId, country);
-      console.log(`Parsed ${reviews.length} reviews from page ${page}`);
-
-      return reviews;
+      console.warn(`No reviews found in any RSS URL for app ${appId} page ${page}`);
+      return [];
     } catch (error) {
       console.error(`Failed to fetch page ${page} for app ${appId}:`, error);
       throw error;
     }
+  }
+
+  private static buildReviewUrls(appId: string, country: string, page: number): string[] {
+    return [
+      `${this.BASE_URL}/${country}/rss/customerreviews/id=${appId}/page=${page}/json`,
+      `${this.BASE_URL}/${country}/rss/customerreviews/page=${page}/id=${appId}/sortBy=mostRecent/json`,
+      `${this.BASE_URL}/${country}/rss/customerreviews/page=${page}/id=${appId}/sortby=mostrecent/json`,
+    ];
   }
 
   /**
@@ -171,14 +186,8 @@ export class AppStoreFetcher {
     try {
       // 尝试获取下一页，如果返回空或错误，说明没有更多页面
       const nextPage = currentPage + 1;
-      const url = `${this.BASE_URL}/${country}/rss/customerreviews/id=${appId}/page=${nextPage}/json`;
-
-      const response = await this.fetchWithRetry(url);
-      const data: AppStoreResponse = await response.json();
-
-      // 如果有feed和entry，说明还有更多页面
-      return !!(data.feed && data.feed.entry && data.feed.entry.length > 0);
-    } catch (error) {
+      return (await this.fetchPageReviews(appId, country, nextPage)).length > 0;
+    } catch {
       console.log(`No more pages after page ${currentPage}`);
       return false;
     }
