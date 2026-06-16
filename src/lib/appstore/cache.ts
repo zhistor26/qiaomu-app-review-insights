@@ -14,6 +14,7 @@ import {
 import { ReviewDiagnostics, buildReviewDiagnostics } from '@/lib/appstore/diagnostics';
 import { upsertReviewHistory } from '@/lib/appstore/review-history';
 import { ReviewStats, sortReviewsForAnalysis, summarizeReviews } from '@/lib/appstore/review-summary';
+import { getSiteUrl } from '@/lib/site-url';
 import { AppReviewSource, AppStoreReview } from '@/types';
 
 export interface CachedModelInfo {
@@ -95,14 +96,13 @@ interface GenerateCachedReviewResult {
 }
 
 const CACHE_VERSION = 1;
-const DEFAULT_SITE_URL = 'https://appreview.qiaomu.ai';
 
 function cacheRoot() {
   return process.env.APP_REVIEW_CACHE_DIR || path.join(process.cwd(), 'src', 'data', 'app-cache');
 }
 
 function siteUrl() {
-  return (process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL).replace(/\/$/, '');
+  return getSiteUrl();
 }
 
 function safeCacheKey(country: string, appId: string) {

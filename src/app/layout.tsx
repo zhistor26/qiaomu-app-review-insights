@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { getMetadataBase, getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const umamiWebsiteId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
-const umamiDomain = process.env.NEXT_PUBLIC_UMAMI_DOMAIN || "appreview.qiaomu.ai";
+const umamiScriptSrc = process.env.NEXT_PUBLIC_UMAMI_SCRIPT_SRC;
+const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://appreview.qiaomu.ai"),
+  metadataBase: getMetadataBase(),
   title: {
     default: "乔木 App 洞察",
     template: "%s | 乔木 App 洞察",
@@ -20,7 +22,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "乔木 App 洞察",
     description: "把 App Store 用户评价变成清晰、可复盘的产品洞察页面。",
-    url: "https://appreview.qiaomu.ai/",
+    url: `${siteUrl}/`,
     siteName: "乔木 App 洞察",
     type: "website",
   },
@@ -42,11 +44,11 @@ export default function RootLayout({
         className="antialiased"
       >
         {children}
-        {umamiWebsiteId ? (
+        {umamiWebsiteId && umamiScriptSrc ? (
           <Script
-            src="https://umami.qiaomu.ai/script.js"
+            src={umamiScriptSrc}
             data-website-id={umamiWebsiteId}
-            data-domains={umamiDomain}
+            data-domains={process.env.NEXT_PUBLIC_UMAMI_DOMAIN}
             strategy="afterInteractive"
           />
         ) : null}

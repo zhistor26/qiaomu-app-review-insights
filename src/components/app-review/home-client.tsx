@@ -15,7 +15,7 @@ import {
   X,
 } from 'lucide-react';
 import { InsightGrid } from '@/components/app-review/insight-cards';
-import { BrandMark, RewardSupportDialog, SiteAffordances, SiteFooter } from '@/components/app-review/site-footer';
+import { BrandMark, SiteFooter } from '@/components/app-review/site-footer';
 import {
   ReviewSourceBreakdown,
   ReviewSourceBreakdownPanel,
@@ -364,7 +364,6 @@ export default function Home({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<ResearchData | null>(null);
-  const [rewardOpen, setRewardOpen] = useState(false);
 
   const maxBucket = useMemo(() => result ? maxRatingBucket(result.stats) : 1, [result]);
   const visibleInsights = result?.insights && hasMeaningfulClientInsights(result.insights) ? result.insights : null;
@@ -385,16 +384,10 @@ export default function Home({
       const payload = await response.json() as ApiResponse<ResearchData>;
 
       if (!response.ok || !payload.success || !payload.data) {
-        if (response.status === 429) {
-          setRewardOpen(true);
-        }
         throw new Error(payload.error || '检索失败');
       }
 
       setResult(payload.data);
-      if (payload.data.generation?.status === 'queued') {
-        setRewardOpen(true);
-      }
     } catch (researchError) {
       setError(researchError instanceof Error ? researchError.message : '检索失败');
     } finally {
@@ -407,9 +400,6 @@ export default function Home({
       <header className="border-b border-zinc-200 bg-white/90">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <BrandMark compact />
-          <div className="flex items-center gap-2">
-            <SiteAffordances subtle />
-          </div>
         </div>
       </header>
 
@@ -703,7 +693,6 @@ export default function Home({
         </>
       )}
       <SiteFooter />
-      <RewardSupportDialog open={rewardOpen} onOpenChange={setRewardOpen} />
     </main>
   );
 }

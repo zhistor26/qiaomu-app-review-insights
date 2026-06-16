@@ -1,11 +1,11 @@
 import type { MetadataRoute } from 'next';
 import { listCachedReviewPages } from '@/lib/appstore/cache';
-
-const siteUrl = 'https://appreview.qiaomu.ai';
+import { getSiteUrl } from '@/lib/site-url';
 
 export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const siteUrl = getSiteUrl();
   const pages = await listCachedReviewPages();
 
   return [

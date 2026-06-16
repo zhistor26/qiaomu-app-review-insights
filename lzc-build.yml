@@ -2,6 +2,11 @@ buildscript: node scripts/generate-lpk-icon.mjs
 pkgout: ./
 icon: ./icon.png
 manifest: ./lzc-manifest.yml
+contentdir: ./public/lazycat-injects
+
+resource_exports:
+  - kind: skills
+    source: ./resources/skills
 
 images:
   appreview:

@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react';
 import { ArrowUpRight, Bot, ChevronsUpDown, Loader2, RefreshCw, Trophy } from 'lucide-react';
-import { RewardSupportDialog } from '@/components/app-review/site-footer';
 import { Button } from '@/components/ui/button';
 
 type TopChartType = 'free' | 'paid';
@@ -71,7 +70,6 @@ export function TopChartsSection({ countries, categories, initialApps }: TopChar
   const [loading, setLoading] = useState(false);
   const [generatingId, setGeneratingId] = useState('');
   const [error, setError] = useState('');
-  const [rewardOpen, setRewardOpen] = useState(false);
 
   const title = useMemo(
     () => `${optionLabel(countries, country)} · ${optionLabel(categories, category)} · ${chartLabel(chart)} Top 10`,
@@ -146,13 +144,7 @@ export function TopChartsSection({ countries, categories, initialApps }: TopChar
       }>;
 
       if (!response.ok || !payload.success || !payload.data) {
-        if (response.status === 429) {
-          setRewardOpen(true);
-        }
         throw new Error(payload.error || '生成洞察失败');
-      }
-      if (payload.data.generation?.status === 'queued') {
-        setRewardOpen(true);
       }
 
       setApps((items) => items.map((item) => item.id === app.id ? {
@@ -288,7 +280,6 @@ export function TopChartsSection({ countries, categories, initialApps }: TopChar
           ))}
         </div>
       </div>
-      <RewardSupportDialog open={rewardOpen} onOpenChange={setRewardOpen} />
     </section>
   );
 }

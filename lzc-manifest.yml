@@ -1,12 +1,23 @@
 usage: >-
   安装时必填 LLM API Key；管理员首次访问加 ?whois=qiaomu。
   数据存 /lzcapp/var/data；定时抓取 08:00 UTC、分析 20:00 UTC。
-  上游 https://github.com/joeseesun/qiaomu-app-review-insights
 
 application:
   subdomain: appreview
   routes:
     - /=http://appreview:3000
+  injects:
+    - id: netdisk-save-report
+      on: browser
+      when:
+        - /*
+      do:
+        - src: file:///lzcapp/pkg/content/lzc-file-chooser-inject.js
+          params:
+            locale: auto
+            hooks:
+              fileSystemAccess: true
+              fileInput: false
 
 services:
   appreview:

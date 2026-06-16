@@ -13,9 +13,12 @@ import { ReportPreview } from '@/components/report/report-preview';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { RefreshCw, Download, BarChart3, FileText } from 'lucide-react';
+import { RefreshCw, Download, BarChart3, FileText, HardDriveUpload } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { formatRelativeTime } from '@/lib/utils';
+import { canSaveReport } from '@/lib/lazycat/can-save-report';
+import { saveMarkdownReportToDisk } from '@/lib/lazycat/save-to-disk';
+import { SaveReportError } from '@/lib/lazycat/save-to-disk-errors';
 
 interface AnalysisDashboardProps {
   app: App;
@@ -29,6 +32,7 @@ export function AnalysisDashboard({ app }: AnalysisDashboardProps) {
   const [showReportPreview, setShowReportPreview] = useState(false);
   const [progress, setProgress] = useState<{ total: number; analyzed: number; coverage: number; lastAnalyzed?: string } | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
+  const [savingToDisk, setSavingToDisk] = useState(false);
   const analyzeAbort = useRef({ stop: false });
   const PAGE_SIZE = 50;
   const COVERAGE_TARGET = 85;
@@ -106,6 +110,28 @@ export function AnalysisDashboard({ app }: AnalysisDashboardProps) {
     } catch (error) {
       console.error('Failed to export report:', error);
       alert('导出报告失败');
+    }
+  };
+
+  const saveReportToLazyCatDisk = async () => {
+    if (!canSaveReport(analysis)) {
+      alert('请先完成分析后再保存至网盘');
+      return;
+    }
+    try {
+      setSavingToDisk(true);
+      const result = await saveMarkdownReportToDisk(app.id, app.name);
+      if (result.mode === 'fallback-download') {
+        alert('当前环境不支持网盘选择器，已改为本地下载');
+      }
+    } catch (error) {
+      if (error instanceof SaveReportError && error.code === 'USER_CANCELLED') {
+        return;
+      }
+      const message = error instanceof Error ? error.message : '保存至网盘失败';
+      alert(message);
+    } finally {
+      setSavingToDisk(false);
     }
   };
 
@@ -298,6 +324,24 @@ export function AnalysisDashboard({ app }: AnalysisDashboardProps) {
                   </Button>
                 ) : null}
                 <Button variant="outline" size="sm" onClick={exportReport}>导出 MD</Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={saveReportToLazyCatDisk}
+                  disabled={!canSaveReport(analysis) || savingToDisk}
+                >
+                  {savingToDisk ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                      保存中...
+                    </>
+                  ) : (
+                    <>
+                      <HardDriveUpload className="h-4 w-4 mr-2" />
+                      保存至懒猫网盘
+                    </>
+                  )}
+                </Button>
                 <Button variant="outline" size="sm" onClick={exportCSV}>下载评论</Button>
               </>
             )}
@@ -344,6 +388,22 @@ export function AnalysisDashboard({ app }: AnalysisDashboardProps) {
           </Button>
           <Button variant="outline" onClick={exportReport}>
             <FileText className="h-4 w-4 mr-2" />下载 Markdown 报告
+          </Button>
+          <Button
+            onClick={saveReportToLazyCatDisk}
+            disabled={!canSaveReport(analysis) || savingToDisk}
+          >
+            {savingToDisk ? (
+              <>
+                <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                保存中...
+              </>
+            ) : (
+              <>
+                <HardDriveUpload className="h-4 w-4 mr-2" />
+                保存至懒猫网盘
+              </>
+            )}
           </Button>
         </div>
       </div>

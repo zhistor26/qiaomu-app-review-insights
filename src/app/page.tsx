@@ -6,8 +6,11 @@ import {
   TOP_CHART_COUNTRIES,
   fetchTopChartApps,
 } from '@/lib/appstore/top-charts';
+import { getSiteUrl } from '@/lib/site-url';
 
 export const dynamic = 'force-dynamic';
+
+const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   title: '乔木 App 洞察 - App Store 用户评价分析与产品机会挖掘',
@@ -22,12 +25,12 @@ export const metadata: Metadata = {
     '产品需求分析',
   ],
   alternates: {
-    canonical: 'https://appreview.qiaomu.ai/',
+    canonical: `${siteUrl}/`,
   },
   openGraph: {
     title: '乔木 App 洞察',
     description: '把 App Store 用户评价生成产品洞察页面，快速发现产品痛点、机会和版本风险。',
-    url: 'https://appreview.qiaomu.ai/',
+    url: `${siteUrl}/`,
     siteName: '乔木 App 洞察',
     type: 'website',
   },

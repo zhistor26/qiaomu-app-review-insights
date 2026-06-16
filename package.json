@@ -19,7 +19,9 @@
     "start:3000": "next start --port 3000",
     "start:4000": "next start --port 4000",
     "start:5000": "next start --port 5000",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -47,6 +49,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.9"
   }
 }

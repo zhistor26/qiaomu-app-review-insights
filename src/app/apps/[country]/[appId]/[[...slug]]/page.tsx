@@ -16,6 +16,7 @@ import {
 } from '@/lib/appstore/cache';
 import { buildReviewDiagnostics } from '@/lib/appstore/diagnostics';
 import { normalizeCountry } from '@/lib/appstore/discovery';
+import { getSiteUrl } from '@/lib/site-url';
 
 export const runtime = 'nodejs';
 export const revalidate = 3600;
@@ -122,6 +123,7 @@ export default async function AppInsightPage({ params }: PageProps) {
   const insights = hasMeaningfulInsights(page.insights) ? page.insights : null;
   const diagnostics = page.diagnostics || buildReviewDiagnostics(page.reviews);
   const maxBucket = maxRatingBucket(page);
+  const siteUrl = getSiteUrl();
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -130,17 +132,16 @@ export default async function AppInsightPage({ params }: PageProps) {
     datePublished: page.generatedAt,
     dateModified: page.updatedAt,
     author: {
-      '@type': 'Person',
-      name: '向阳乔木',
-      url: 'https://qiaomu.ai',
+      '@type': 'Organization',
+      name: 'App Review Insights',
     },
     publisher: {
       '@type': 'Organization',
-      name: '乔木 App 洞察',
-      url: 'https://appreview.qiaomu.ai',
+      name: 'App Review Insights',
+      url: siteUrl,
       logo: {
         '@type': 'ImageObject',
-        url: 'https://appreview.qiaomu.ai/logo.svg',
+        url: `${siteUrl}/logo.svg`,
       },
     },
     mainEntity: {
