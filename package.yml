@@ -1,0 +1,30 @@
+package: cloud.lazycat.app.qiaomu-appreview
+version: 0.1.0
+name: 乔木 App 评论洞察
+description: >-
+  自托管 App Store 评论抓取与 AI 洞察分析，支持情感趋势、主题聚类与版本诊断。
+  安装时需填写 LLM API Key；管理员入口 ?whois=qiaomu。
+author: joeseesun
+license: MIT
+homepage: https://github.com/joeseesun/qiaomu-app-review-insights
+locales:
+  zh-CN:
+    name: 乔木 App 评论洞察
+    description: >-
+      自托管 App Store 评论抓取与 AI 洞察分析。安装时填写 LLM API Key；
+      管理员访问 ?whois=qiaomu。上游 https://github.com/joeseesun/qiaomu-app-review-insights
+    usage: >-
+      安装时必填 LLM API Key（DeepSeek 或兼容 OpenAI 端点）。
+      管理员功能：首次访问 URL 加 ?whois=qiaomu。
+      数据持久化于 /lzcapp/var/data；定时任务每日 08:00 抓取、20:00 分析（UTC）。
+      上游 https://github.com/joeseesun/qiaomu-app-review-insights
+  en-US:
+    name: Qiaomu App Review Insights
+    description: >-
+      Self-hosted App Store review fetch and AI insights. LLM API Key required at install;
+      admin via ?whois=qiaomu. Upstream https://github.com/joeseesun/qiaomu-app-review-insights
+    usage: >-
+      LLM API Key required at install (DeepSeek or OpenAI-compatible endpoint).
+      Admin: append ?whois=qiaomu to the URL on first visit.
+      Data persists under /lzcapp/var/data; cron fetch 08:00 UTC, analyze 20:00 UTC.
+      Upstream https://github.com/joeseesun/qiaomu-app-review-insights

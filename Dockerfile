@@ -21,14 +21,18 @@ ENV HOSTNAME=0.0.0.0
 
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
-RUN mkdir -p /app/src/data \
+RUN apk add --no-cache su-exec \
+  && mkdir -p /app/src/data /lzcapp/var/data /lzcapp/var/app-cache \
   && chown -R nextjs:nodejs /app/src
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-USER nextjs
 EXPOSE 3000
 
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["node", "server.js"]

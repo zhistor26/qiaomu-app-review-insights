@@ -1,0 +1,10 @@
+buildscript: node scripts/generate-lpk-icon.mjs
+pkgout: ./
+icon: ./icon.png
+manifest: ./lzc-manifest.yml
+
+images:
+  appreview:
+    dockerfile: ./Dockerfile
+    context: .
+    upstream-match: registry.lazycat.cloud

@@ -1,0 +1,52 @@
+usage: >-
+  安装时必填 LLM API Key；管理员首次访问加 ?whois=qiaomu。
+  数据存 /lzcapp/var/data；定时抓取 08:00 UTC、分析 20:00 UTC。
+  上游 https://github.com/joeseesun/qiaomu-app-review-insights
+
+application:
+  subdomain: appreview
+  routes:
+    - /=http://appreview:3000
+
+services:
+  appreview:
+    # release 提审前可改为 copy-image 后的 registry 地址；本地验证用 embed 内嵌构建
+    image: embed:appreview
+    binds:
+      - /lzcapp/var/data:/app/src/data
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - STORAGE_TYPE=local
+      - APP_REVIEW_CACHE_DIR=/app/src/data/app-cache
+      - APP_REVIEW_GENERATION_LIMIT_DIR=/app/src/data/app-cache/.generation-guard
+      - APP_REVIEW_HISTORY_DIR=/app/src/data/app-cache/.review-history
+      - NEXT_PUBLIC_SITE_URL=https://{{ .S.AppDomain }}
+      - QIAOMU_LLM_API_KEY={{ .U.qiaomu_llm_api_key }}
+      - QIAOMU_LLM_BASE_URL={{ .U.qiaomu_llm_base_url }}
+      - QIAOMU_LLM_MODEL={{ .U.qiaomu_llm_model }}
+      - DEEPSEEK_API_KEY={{ .U.qiaomu_llm_api_key }}
+      - DEEPSEEK_BASE_URL={{ .U.qiaomu_llm_base_url }}
+      - DEEPSEEK_MODEL={{ .U.qiaomu_llm_model }}
+      - CRON_SECRET={{ stable_secret "cron_secret" }}
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - -qO-
+        - http://127.0.0.1:3000/api/health
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  cron:
+    image: registry.lazycat.cloud/u64111927/alpine/curl:d7634768f2a4a7e7
+    depends_on:
+      - appreview
+    environment:
+      - CRON_SECRET={{ stable_secret "cron_secret" }}
+    entrypoint: /bin/sh
+    command: |-
+      -c "echo '0 8 * * * curl -sf -X POST -H \"Authorization: Bearer '"'"'$$CRON_SECRET'"'"'\" http://appreview:3000/api/cron/fetch >> /proc/1/fd/1 2>&1' > /etc/crontabs/root && echo '0 20 * * * curl -sf -X POST -H \"Authorization: Bearer '"'"'$$CRON_SECRET'"'"'\" http://appreview:3000/api/cron/analyze >> /proc/1/fd/1 2>&1' >> /etc/crontabs/root && crond -f -l 2"

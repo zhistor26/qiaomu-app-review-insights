@@ -1,0 +1,5 @@
+package_override:
+  package: cloud.lazycat.app.qiaomu-appreview.dev
+
+envs:
+  - DEV_MODE=1
