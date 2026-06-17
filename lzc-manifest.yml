@@ -15,6 +15,23 @@ application:
         - src: file:///lzcapp/pkg/content/lzc-file-chooser-inject.js
           params:
             locale: auto
+            text:
+              zh-CN:
+                openTitle: 打开
+                saveTitle: 保存
+                openLocal: 从本地打开
+                openLazyCat: 从懒猫打开
+                saveLocal: 保存至本地
+                saveLazyCat: 保存至懒猫微服
+                cancel: 取消
+              en-US:
+                openTitle: Open
+                saveTitle: Save
+                openLocal: Open from local device
+                openLazyCat: Open from LazyCat
+                saveLocal: Save to local device
+                saveLazyCat: Save to LazyCat
+                cancel: Cancel
             hooks:
               fileSystemAccess: true
               fileInput: false

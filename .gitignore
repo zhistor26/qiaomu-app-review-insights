@@ -59,8 +59,9 @@ Thumbs.db
 logs
 *.log
 
-# 懒猫微服 LPK 本地构建产物
+# 懒猫微服 LPK 本地构建产物（保留当前发布包供下载）
 *.lpk
+!cloud.lazycat.app.qiaomu-appreview-v0.1.1.lpk
 .lzc-cli-build*/
 .lzc-cli-cache/
 .lzc-cli-install*/

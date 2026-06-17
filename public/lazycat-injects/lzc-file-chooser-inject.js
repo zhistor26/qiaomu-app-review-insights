@@ -126,13 +126,13 @@
 
   const DEFAULT_TEXT = {
     "zh-CN": {
-      openTitle: "æ‰“å¼€",
-      saveTitle: "ä¿å­˜",
-      openLocal: "ä»Žæœ¬åœ°æ‰“å¼€",
-      openLazyCat: "ä»Žæ‡’çŒ«æ‰“å¼€",
-      saveLocal: "ä¿å­˜è‡³æœ¬åœ°",
-      saveLazyCat: "ä¿å­˜è‡³æ‡’çŒ«",
-      cancel: "å–æ¶ˆ",
+      openTitle: "打开",
+      saveTitle: "保存",
+      openLocal: "从本地打开",
+      openLazyCat: "从懒猫打开",
+      saveLocal: "保存至本地",
+      saveLazyCat: "保存至懒猫微服",
+      cancel: "取消",
     },
     "en-US": {
       openTitle: "Open",

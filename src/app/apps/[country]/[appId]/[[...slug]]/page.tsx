@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { AlertCircle, Apple, ArrowLeft, ArrowUpRight, Lightbulb, Star, Target, TrendingDown } from 'lucide-react';
 import { InsightGrid } from '@/components/app-review/insight-cards';
 import { RegenerateButton } from '@/components/app-review/regenerate-button';
+import { SaveInsightReportButton } from '@/components/app-review/save-insight-report-button';
 import { BrandMark, SiteFooter } from '@/components/app-review/site-footer';
 import { ReviewSourceBreakdownPanel, reviewSourceLabel } from '@/components/app-review/source-breakdown';
 import { VersionDiagnosticsPanel } from '@/components/app-review/version-diagnostics';
@@ -223,6 +224,12 @@ export default async function AppInsightPage({ params }: PageProps) {
                 </a>
               ) : null}
               <RegenerateButton appId={page.app.id} country={page.app.country} />
+              <SaveInsightReportButton
+                country={page.app.country}
+                appId={page.app.id}
+                appName={page.app.name}
+                totalReviews={page.stats.totalReviews}
+              />
             </div>
           </div>
 
